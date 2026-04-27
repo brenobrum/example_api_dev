@@ -1,5 +1,5 @@
 from app.domain.repositories.db.base_db_repository import BaseDbRepository
-from typing import Protocol, TypeVar
+from typing import Protocol, TypeVar, cast
 
 class HasId(Protocol):
     id: str
@@ -7,9 +7,12 @@ class HasId(Protocol):
 T = TypeVar('T', bound=HasId)
 
 class LocalBaseDbRepository(BaseDbRepository[T]):
+    _storage: dict[str, HasId] = {}
 
     def __init__(self) -> None:
-        self.db: dict[str, T] = {}
+        if "_storage" not in self.__class__.__dict__:
+            self.__class__._storage = {}
+        self.db: dict[str, T] = cast(dict[str, T], self.__class__._storage)
 
     def create(self, entity: T) -> T:
         self.db[entity.id] = entity

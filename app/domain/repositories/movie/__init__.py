@@ -1,0 +1,3 @@
+from app.domain.repositories.movie.movie_repository import MovieRepository
+
+__all__ = ["MovieRepository"]
